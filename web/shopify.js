@@ -13,12 +13,12 @@ const billingTrialDays = parseInt(process.env.BILLING_TRIAL_DAYS || "0", 10);
 
 const billingConfig = {
   [billingPlanName]: {
+    trialDays: billingTrialDays,
     lineItems: [
       {
         amount: billingAmount,
         currencyCode: billingCurrencyCode,
         interval: BillingInterval.Every30Days,
-        trialDays: billingTrialDays,
       },
     ],
   },
