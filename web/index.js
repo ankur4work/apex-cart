@@ -697,7 +697,7 @@ app.get("/api/billing/callback", async (req, res) => {
         }
         const shopPrefix = shop.replace(".myshopify.com", "");
         const host = Buffer.from("admin.shopify.com/store/" + shopPrefix).toString("base64url");
-        return res.redirect(process.env.HOST + "?shop=" + encodeURIComponent(shop) + "&host=" + host);
+        return res.redirect(process.env.HOST + "/pricing?shop=" + encodeURIComponent(shop) + "&host=" + host);
     } catch (err) {
         console.error("Billing callback error:", err);
         return res.redirect(process.env.HOST);
