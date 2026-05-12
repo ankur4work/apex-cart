@@ -22,6 +22,13 @@ export default function Pricing() {
   const [confirm, setConfirm] = useState({ open: false, target: null, title: "", message: "" });
   const [banner, setBanner] = useState({ msg: "", status: "info" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [planInfo, setPlanInfo] = useState({ amount: "20", trialDays: 0 });
+
+  useEffect(() => {
+    fetch("/api/plan-info").then(r => r.json()).then(d => {
+      setPlanInfo({ amount: parseFloat(d.amount).toFixed(0), trialDays: d.trialDays || 0 });
+    }).catch(() => {});
+  }, []);
 
   const resolveShop = () => {
     const queryShop = new URLSearchParams(window.location.search).get("shop");
@@ -193,10 +200,10 @@ export default function Pricing() {
                 {serverTier === "premium" ? <Badge status="success">Active</Badge> : <Badge status="warning">Popular</Badge>}
               </div>
               <div style={{ marginTop: "15px", display: "flex", alignItems: "baseline" }}>
-                <span style={{ fontSize: "54px", fontWeight: "800" }}>$99</span>
-                <span style={{ fontSize: "16px", opacity: 0.8, marginLeft: "5px" }}>.99 /month</span>
+                <span style={{ fontSize: "54px", fontWeight: "800" }}>${planInfo.amount}</span>
+                <span style={{ fontSize: "16px", opacity: 0.8, marginLeft: "5px" }}>/month</span>
               </div>
-              <p style={{ marginTop: "10px", fontSize: "14px", opacity: 0.9, minHeight:"40px" }}>Full styling control and zero branding.</p>
+              <p style={{ marginTop: "10px", fontSize: "14px", opacity: 0.9, minHeight:"40px" }}>Full styling control and zero branding.{planInfo.trialDays > 0 ? ` ${planInfo.trialDays}-day free trial.` : ""}</p>
             </div>
             <div style={{ padding: "30px", flexGrow: 1, background: "#1f2937", color: "white" }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 0', borderBottom: '1px solid #374151' }}>

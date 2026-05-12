@@ -819,6 +819,16 @@ app.get("/api/billing/start", async (req, res) => {
     }
 });
 
+/* ---- Plan info: public endpoint for frontend pricing display ---- */
+app.get("/api/plan-info", (_req, res) => {
+  res.json({
+    name: process.env.BILLING_PLAN_NAME || "Premium Plan",
+    amount: process.env.BILLING_AMOUNT || "99.99",
+    trialDays: parseInt(process.env.BILLING_TRIAL_DAYS || "0", 10),
+    currency: "USD",
+  });
+});
+
 /* ---- Analytics: public endpoint (no session required, shop param used as merchant_id) ---- */
 const analyticsDb = createDbConnection(ANALYTICS_DB_PREFIX);
 
