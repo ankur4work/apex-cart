@@ -819,6 +819,28 @@ app.get("/api/billing/start", async (req, res) => {
     }
 });
 
+/* ---- Analytics: public endpoint (no session required, shop param used as merchant_id) ---- */
+const analyticsDb = createDbConnection(ANALYTICS_DB_PREFIX);
+
+app.get("/api/store-atc-count", (req, res) => {
+  const { shop, startDate, endDate } = req.query;
+  if (!shop) return res.status(400).json({ error: "shop param required" });
+
+  let sql = `SELECT COUNT(*) as count FROM ${ANALYTICS_DB_PREFIX}_events WHERE merchant_id = ? AND event_type = 'atc_clicked'`;
+  const params = [shop];
+
+  if (startDate) { sql += ` AND date(created_at) >= ?`; params.push(startDate); }
+  if (endDate)   { sql += ` AND date(created_at) <= ?`; params.push(endDate); }
+
+  analyticsDb.get(sql, params, (err, row) => {
+    if (err) {
+      console.error("Error fetching atc count:", err.message);
+      return res.status(500).json({ error: "DB error" });
+    }
+    res.json({ productCount: row?.count ?? 0 });
+  });
+});
+
 /* ----------------------- Protected Routes ----------------------- */
 app.use("/api/*splat", shopify.validateAuthenticatedSession());
 
