@@ -1,0 +1,497 @@
+{% comment %}
+  ============================================
+  ANCHOR CART COMPONENT
+  Free vs Premium Plan Logic based on Metafield
+  ============================================
+{% endcomment %}
+
+{% comment %} Get subscription status from shop metafield {% endcomment %}
+{% assign subscription_tier = shop.metafields.anchor_cart.subscription | default: "free" %}
+{% assign is_premium = false %}
+{% if subscription_tier == "premium" %}
+  {% assign is_premium = true %}
+{% endif %}
+
+{% comment %} Debug: Show current tier {% endcomment %}
+{% comment %}<div style="display:none;">Tier: {{ subscription_tier }}, Premium: {{ is_premium }}</div>{% endcomment %}
+
+{% if template contains "product" %}
+    {% assign is-template-exists = false %}
+    {% assign current-template = product.template_suffix %}
+    
+    {% comment %} Template exclusion - PREMIUM FEATURE {% endcomment %}
+    {% assign excluded_templates = "" %}
+    {% if is_premium and block.settings.excluded_templates %}
+        {% assign excluded_templates = block.settings.excluded_templates | split: "," %}
+        {% for template in excluded_templates %}
+            {% assign fileName = template | strip %}
+            {% if fileName == current-template  %}
+                {% assign is-template-exists = true %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% unless is-template-exists %}
+    <div id="m-sticky-add-to-cart" data-product-id="{{ product.id }}" data-variant-id="{% for variant in product.variants %}{{ variant.id }},{{ variant.title }},{{ variant.price | money_with_currency }},{{ variant.compare_at_price |  money_with_currency }}{% unless forloop.last %},{% endunless %}{% endfor %}">
+    <div class="m-sticky-bar">
+        <div class="m-product-info">
+        <img id="m-sticky-product-image" src="{{ product.featured_image |  image_url: width:500  }}" alt="Product Image" height="" width="" />
+        <div class="m-product-details">
+            <h4 id="m-sticky-product-title">{{ product.title |  truncate: 22}}</h4>
+            {% if product.compare_at_price %}
+                <p class="m-product-compare-price" style="text-decoration: line-through;">{{ product.compare_at_price | money_with_currency }}</p>
+            {% endif %}
+            <p id="m-sticky-product-price">{{ product.price |  money_with_currency }}</p>
+            {% if product.compare_at_price %}
+                {% assign discount = product.compare_at_price | minus: product.price %}
+                {% assign discount_fraction = discount | times: 100.0 | divided_by: product.compare_at_price %}
+                {% assign discount_percentage = discount_fraction | round %}
+                <span class="m-product-discount-percentage">{{ discount_percentage }}% off</span>
+            {% endif %}
+            
+            {% comment %} Tax text - PREMIUM FEATURE {% endcomment %}
+            {% if is_premium and block.settings.enable-tax-text != blank %}
+                <p class="m-tax-include">{{ block.settings.enable-tax-text }}</p>
+            {% endif %}
+        </div>
+        </div>
+        
+        {% comment %} Variant display - PREMIUM FEATURE {% endcomment %}
+        {% unless product.has_only_default_variant %}
+            {% unless block.settings.enable-selected-v-option and is_premium %}
+                <div class="m-selected-variant"></div>
+            {% endunless %}
+        {% endunless %}
+        
+        <button id="m-sticky-add-to-cart-button" onclick="logAtcClickEvent({{ product.id }})" data-btn-product-id="{{ product.id }}">
+    {% if is_premium and block.settings.block.settings.text-atc-btn %}{{ block.settings.text-atc-btn }}{% else %}Add To Cart{%endif%}
+        </button>
+    </div>
+    </div>
+    {% endunless %}
+{% endif %}
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    function checkStockStatus() {
+        const originalATCButton = document.querySelector("form[action='/cart/add'] button[type='submit']");
+        const stickyATCBtn = document.getElementById('m-sticky-add-to-cart-button');
+
+        if (!originalATCButton || !stickyATCBtn) return;
+
+        if (originalATCButton.hasAttribute('disabled') || originalATCButton.classList.contains('sold-out')) {
+            stickyATCBtn.textContent = "Out of Stock";
+            stickyATCBtn.setAttribute('disabled', 'true');
+            stickyATCBtn.classList.add('disabled');
+        } else {
+            stickyATCBtn.textContent = stickyATCBtn.getAttribute('data-default-text') || "Add to Cart";
+            stickyATCBtn.removeAttribute('disabled');
+            stickyATCBtn.classList.remove('disabled');
+        }
+    }
+    
+    checkStockStatus();
+
+    function triggerAddToCart({ cartButtonSelector = '', cartFormSelector = '', productForm = null }) {
+        try {
+            if (cartButtonSelector.trim()) {
+                const customButton = document.querySelector(cartButtonSelector);
+                if (customButton) {
+                    customButton.click();
+                    return customButton;
+                }
+            }
+
+            let form = productForm || (cartFormSelector.trim() && document.querySelector(cartFormSelector));
+
+            if (form) {
+                const submitButton = form.querySelector("button[type='submit']");
+                if (submitButton) {
+                    submitButton.click();
+                    return submitButton;
+                }
+            }
+
+            for (const form of document.querySelectorAll("form")) {
+                if (form.action.includes("/cart/add")) {
+                    const productIdInput = form.querySelector("input[name='product-id']");
+                    const productId = document.getElementById("m-sticky-add-to-cart").getAttribute("data-product-id");
+                    if (productIdInput && productIdInput.value == productId) {
+                        const submitButton = form.querySelector("button[type='submit']");
+                        if (submitButton) {
+                            submitButton.click();
+                            return submitButton;
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error triggering Add to Cart:', error);
+        }
+        return null;
+    }
+
+    const stickyATCBtn = document.getElementById('m-sticky-add-to-cart-button');
+    if (stickyATCBtn){
+        stickyATCBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            triggerAddToCart({
+                cartButtonSelector: '',
+                cartFormSelector: '',
+                productForm: document.querySelector('form[action="/cart/add"]')
+            });
+        });
+    }
+
+    // Variant tracking - only if variant display is enabled
+    (function () {
+        try {
+            const variantData = document.getElementById("m-sticky-add-to-cart")?.getAttribute("data-variant-id");
+            const displayTitleElement = document.querySelector(".m-selected-variant");
+            
+            // Check if variant display should be active
+            {% unless block.settings.enable-selected-v-option and is_premium %}
+                if (variantData && displayTitleElement) {
+                    const variantArray = variantData.split(',').reduce((acc, value, index, array) => {
+                        if (index % 4 === 0) {
+                            acc.push({
+                                id: parseInt(value, 10),
+                                title: array[index + 1],
+                                price: array[index + 2],
+                                compare_price: array[index + 3] ? array[index + 3] : null
+                            });
+                        }
+                        return acc;
+                    }, []);
+                    
+                    let displayPriceElement = document.getElementById("m-sticky-product-price");
+                    let displayComparePriceElement = document.querySelector(".m-product-compare-price");
+                    let displayDiscountElement = document.querySelector(".m-product-discount-percentage");
+                    const variantInput = document.querySelector("form[action='/cart/add'] select[name='id'], form[action='/cart/add'] input[name='id']");
+
+                    if (variantInput && displayTitleElement && displayPriceElement && displayComparePriceElement) {
+                        const updateSelectedVariant = () => {
+                            const selectedVariantId = parseInt(variantInput.value, 10);
+                            const selectedVariant = variantArray.find(variant => variant.id === selectedVariantId);
+
+                            if (selectedVariant) {
+                                displayTitleElement.textContent = selectedVariant.title;
+                                displayPriceElement.textContent = selectedVariant.price;
+
+                                if (selectedVariant.compare_price) {
+                                    displayComparePriceElement.textContent = selectedVariant.compare_price;
+                                    displayComparePriceElement.style.display = "inline";
+
+                                    const comparePrice = parseFloat(selectedVariant.compare_price.replace(/[^0-9.]/g, ""));
+                                    const price = parseFloat(selectedVariant.price.replace(/[^0-9.]/g, ""));
+                                    const discountPercentage = Math.round(((comparePrice - price) / comparePrice) * 100);
+
+                                    displayDiscountElement.textContent = `${discountPercentage}% off`;
+                                    displayDiscountElement.style.display = "inline";
+                                } else {
+                                    displayComparePriceElement.style.display = "none";
+                                    displayDiscountElement.style.display = "none";
+                                }
+                            } else {
+                                displayTitleElement.textContent = "";
+                                displayPriceElement.textContent = "Price not available.";
+                                displayComparePriceElement.style.display = "none";
+                            }
+                        };
+
+                        updateSelectedVariant();
+                        variantInput.addEventListener("change", updateSelectedVariant);
+                    }
+                }
+            {% else %}
+                // Variant display is disabled (premium feature not active or setting enabled)
+                if (displayTitleElement) {
+                    displayTitleElement.style.display = 'none';
+                }
+            {% endunless %}
+        } catch (error) {
+            console.error("Error updating variant details:", error);
+        }
+    })();
+});
+</script>
+
+<script>
+async function logAtcClickEvent(productId) {
+    const apiUrl = `/apps/anchor-cart/atc_clicked`;
+
+    const eventData = {
+        productId: productId,
+    };
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(eventData),
+        });
+
+        if (!response.ok) {
+            console.error("Failed to log ATC clicked event:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Error making API call:", error);
+    }
+}
+</script>
+
+{% comment %}
+  ============================================
+  SETTINGS & STYLES BASED ON PLAN
+  ============================================
+{% endcomment %}
+
+{% comment %} Device display - FREE FEATURE {% endcomment %}
+{% if is_premium and block.settings.bar-show-in == "desktop" %}
+  <style>
+    @media(min-width: 600px){
+        #m-sticky-add-to-cart{
+            display: none;
+        }
+    }
+  </style>
+{% elsif is_premium and block.settings.bar-show-in == "mobile" %} 
+  <style>
+    @media(max-width: 600px){
+        #m-sticky-add-to-cart{
+            display: none;
+        }
+    }
+  </style>
+{% endif %}
+
+{% comment %} Hide selected variant - PREMIUM FEATURE {% endcomment %}
+{% if block.settings.enable-selected-v-option and is_premium %}
+    <style>
+    .m-selected-variant{
+        display: none !important;
+    }
+    </style>
+{% endif %}
+
+<style>
+        .m-product-info img {
+            display: none;
+        }
+        #m-sticky-product-title {
+            display: none;
+        }
+        #m-sticky-product-price {
+            font-size: 18px;
+            font-weight: 600;
+        }
+    </style>
+
+{% comment %} Hide image/title - FREE FEATURE {% endcomment %}
+{% if is_premium and block.settings.enable-image-option %}
+    <style>
+        .m-product-info img {
+            display: block;
+        }
+        #m-sticky-product-title {
+            display: block;
+        }
+        #m-sticky-product-price {
+            font-size: 16px;
+        }
+    </style>
+{% endif %}
+
+{% comment %}
+  ============================================
+  COLOR CUSTOMIZATION - PREMIUM FEATURES ONLY
+  ============================================
+{% endcomment %}
+
+<style>
+    /* Button styling - PREMIUM ONLY */
+    #m-sticky-add-to-cart-button{
+        {% if is_premium %}
+            background-color: {{ block.settings.atc-bg-color | default: '#000000' }};
+            color: {{ block.settings.atc-text-color | default: '#ffffff' }};
+            border-radius: {{ block.settings.btn-border-radius | default: 30 }}px;
+        {% else %}
+            background-color: #000000;
+            color: #ffffff;
+            border-radius: 30px;
+        {% endif %}
+    }
+
+    /* Discount badge - PREMIUM ONLY */
+    .m-product-discount-percentage{
+        {% if is_premium %}
+            background-color: {{ block.settings.discount-bg-color | default: '#000000' }};
+            color: {{ block.settings.discount-text-color | default: '#ffffff' }};
+        {% else %}
+            background-color: #000000;
+            color: #ffffff;
+        {% endif %}
+    }
+
+    /* Bar background and text - PREMIUM ONLY */
+    #m-sticky-add-to-cart{
+        {% if is_premium %}
+            background-color: {{ block.settings.bar-bg-color | default: '#ffffff' }};
+        {% else %}
+            background-color: #ffffff;
+        {% endif %}
+    }
+    
+    .m-product-details h4,
+    .m-product-details p{
+        {% if is_premium %}
+            color: {{ block.settings.bar-bg-text-color | default: '#000000' }};
+        {% else %}
+            color: #000000;
+        {% endif %}
+    }
+    
+    .m-selected-variant{
+        {% if is_premium %}
+            color: {{ block.settings.bar-bg-text-color | default: '#000000' }};
+        {% else %}
+            color: #000000;
+        {% endif %}
+    }
+   
+</style>
+
+{% schema %}
+    {
+  "name": "Apex Cart",
+  "target": "body",
+  "stylesheet": "anchor-cart.css",
+  "settings": [
+    {
+      "type": "header",
+      "content": "⭐ Premium Settings (Upgrade Required)",
+      "info": "Unlock all advanced customization with Premium Plan"
+    },
+    {
+      "type": "select",
+      "id": "bar-show-in",
+      "label": "Display On",
+      "options": [
+        {
+          "value": "mobile",
+          "label": "Desktop Only"
+        },
+        {
+          "value": "Both",
+          "label": "Both Mobile & Desktop"
+        },
+        {
+          "value": "desktop",
+          "label": "Mobile Only"
+        }
+      ],
+      "default": "Both",
+      "info": "Choose where to show the sticky bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable-image-option",
+      "label": "Show Product Image & Title",
+      "default": true,
+      "info": "Toggle to hide product image and title from sticky bar"
+    },
+    {
+      "type": "text",
+      "id": "text-atc-btn",
+      "label": "Button Text",
+      "default": "Add To Cart",
+      "info": "Customize the add to cart button text"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable-selected-v-option",
+      "label": "Hide Selected Variant",
+      "default": false,
+      "info": "Premium: Hide selected variant from sticky bar"
+    },
+    {
+      "type": "text",
+      "id": "enable-tax-text",
+      "label": "Tax/Price Text",
+      "default": "inclusive of all taxes",
+      "info": "Premium: Custom text below price (e.g., 'inc. tax', 'free shipping')"
+    },
+    {
+      "type": "text",
+      "id": "excluded_templates",
+      "label": "Exclude Templates",
+      "info": "Premium: Hide sticky bar on specific templates. Separate with commas (e.g., cart, collection)"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Color Customization (Premium)",
+      "info": "Advanced color controls for branding"
+    },
+    {
+      "type": "color",
+      "id": "discount-bg-color",
+      "label": "Discount Badge Background",
+      "default": "#000",
+      "info": "Premium: Color for discount badge background"
+    },
+    {
+      "type": "color",
+      "id": "discount-text-color",
+      "label": "Discount Badge Text",
+      "default": "#fff",
+      "info": "Premium: Color for discount badge text"
+    },
+    {
+      "type": "color",
+      "id": "bar-bg-color",
+      "label": "Bar Background",
+      "default": "#fff",
+      "info": "Premium: Background color of sticky bar"
+    },
+    {
+      "type": "color",
+      "id": "bar-bg-text-color",
+      "label": "Bar Text Color",
+      "default": "#000",
+      "info": "Premium: Text color inside sticky bar"
+    },
+    {
+      "type": "header",
+      "content": "🛒 Button Design (Premium)",
+      "info": "Advanced button styling options"
+    },
+    {
+      "type": "color",
+      "id": "atc-bg-color",
+      "label": "Button Background",
+      "default": "#000",
+      "info": "Premium: Background color of Add to Cart button"
+    },
+    {
+      "type": "color",
+      "id": "atc-text-color",
+      "label": "Button Text",
+      "default": "#fff",
+      "info": "Premium: Text color of Add to Cart button"
+    },
+    {
+      "type": "range",
+      "id": "btn-border-radius",
+      "label": "Button Border Radius",
+      "max": 50,
+      "min": 0,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "info": "Premium: Roundness of button corners (0px = square, 50px = pill)"
+    }
+  ]
+}
+{% endschema %}

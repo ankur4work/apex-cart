@@ -1,0 +1,34 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "Apex Cart"
+embedded = true
+client_id = "4dbf5dc5cd341f7210c78b881de90623"
+application_url = "https://anchor.onkra.online"
+
+[build]
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2026-07"
+
+  [webhooks.privacy_compliance]
+  customer_deletion_url = "https://anchor.onkra.online/api/webhooks"
+  customer_data_request_url = "https://anchor.onkra.online/api/webhooks"
+  shop_deletion_url = "https://anchor.onkra.online/api/webhooks"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_products,write_products"
+optional_scopes = [ ]
+use_legacy_install_flow = false
+
+[auth]
+redirect_urls = [ "https://anchor.onkra.online/api/auth", "https://anchor.onkra.online/api/auth/callback", "https://anchor.onkra.online/api/auth/offline-callback" ]
+
+[app_proxy]
+url = "https://anchor.onkra.online/api/proxy"
+subpath = "anchor-cart"
+prefix = "apps"
+
+[pos]
+embedded = false

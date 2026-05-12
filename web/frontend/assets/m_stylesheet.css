@@ -1,0 +1,597 @@
+.appIntro {
+    margin-top: 2.5rem !important;
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(15, 98, 254, 0.05) 0%, rgba(0, 108, 255, 0.05) 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(15, 98, 254, 0.1);
+}
+
+.appFeatures,
+.appSetupGuide {
+    margin-bottom: 2.5rem !important;
+    padding: 24px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.3s ease;
+}
+
+.appFeatures:hover,
+.appSetupGuide:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+  
+
+.appEnableBtn {
+    display: flex;
+    margin-left: 1rem;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #0f62fe 0%, #0043ce 100%);
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.appEnableBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15, 98, 254, 0.3);
+}
+
+.appEnableBtn span:first-child {
+    margin-right: 8px;
+}
+
+.faq .Polaris-Button .Polaris-Icon {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.faq [aria-expanded=true] .Polaris-Icon {
+    transform: rotate(180deg);
+}
+
+.faq {
+    margin-top: 24px;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+#faqHeading,
+#stepsHeading {
+    margin: 40px 0 24px 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #0f62fe;
+}
+
+.faqBlock {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    transition: background-color 0.2s ease;
+}
+
+.faqBlock:hover {
+    background-color: rgba(15, 98, 254, 0.02);
+}
+
+#faqHeading {
+    margin-top: 32px;
+}
+
+
+
+.faq .Polaris-Card__Section {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(15, 98, 254, 0.08);
+}\n\n.faq .Polaris-Card__Section:last-child {
+    border-bottom: none;
+}
+
+.faq .Polaris-Button span {
+    width: 100%;
+    font-weight: 500;
+}
+
+.faq .faqBlock span {
+    width: auto;
+    margin: 0;
+}
+
+.faq .Polaris-TextContainer {
+    padding: 16px 20px 12px;
+}
+
+.faq .Polaris-TextContainer p {
+    line-height: 1.6;
+    color: #384860;
+}
+
+.faq .Polaris-Stack__Item:last-child {
+    margin: 0 !important;
+}
+
+.faq .Polaris-Button--plain:active:not(.Polaris-Button--iconOnly)>.Polaris-Button__Content {
+    padding: 0;
+    margin: 0;
+}
+
+.setupCard {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+}
+
+.setupCard:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.setupCard .Polaris-MediaCard__ActionContainer.Polaris-MediaCard--portrait {
+    padding-top: 16px;
+}
+
+.stepsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 24px;
+}
+
+.stepsGrid .Polaris-Card {
+    margin-top: 0 !important;
+    width: 100%;
+    border-radius: 12px;\n    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);\n    transition: all 0.3s ease;\n}\n\n.stepsGrid .Polaris-Card:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);\n    transform: translateY(-2px);
+}
+
+.Polaris-Page {
+    padding: 24px;
+    background-color: #f5f7fa;
+}
+
+.videoWrapper {
+    border-radius: 12px;
+    height: 540px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);\n    overflow: hidden;
+}
+
+.videoWrapper div {
+    width: auto !important;
+    height: 100% !important;
+}
+
+table.Polaris-DataTable__Table th:not(:first-child),
+table.Polaris-DataTable__Table td,
+table.Polaris-DataTable__Table td * {
+    text-align: center;
+    margin: 0 auto
+}
+
+table.Polaris-DataTable__Table thead th {
+    font-size: 15px !important;
+}
+
+.planComparison h2.Polaris-Heading {
+    font-size: 18px;
+}
+
+
+
+
+.plansGif {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+
+/* headerpart cursor */
+.Polaris-TopBar__LogoLink {
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+/* m-meta-card-design-for-lookbook-keyfeature */
+
+
+.meta-card-data-wrapper {
+    position: relative;
+    height: 100%;
+}
+
+.meta-card-data-1 {
+    display: flex;
+    flex-direction: column;
+    margin: -16px 0px 0px;
+    padding: 30px;
+
+}
+
+
+
+
+.meta-image-1 img {
+    width: 75px;
+    position: relative;
+    left: 47px;
+    top: -23px;
+    opacity: 1;
+}
+
+
+
+
+.meta-product-1 {
+    text-align: center;
+    font-size: 1em;
+}
+
+
+.meta-card-hovered-data {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 0;
+    visibility: hidden;
+    transition: all .2s ease-in-out;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+
+}
+
+.meta-card-hovered-data-paragraph-1 {
+    text-align: center;
+    padding: 10px;
+}
+
+
+
+.meta-card-data-wrapper:hover .meta-card-hovered-data {
+    visibility: visible;
+    background-color: #24ade3;
+    color: var(--p-text-on-critical);
+
+    height: 100px;
+
+
+}
+
+
+/*  m-meta-card-design-for-lookbook-keyfeature(calling_part)*/
+
+
+.m-keyfeature-container-1 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+
+}
+
+
+
+
+
+
+/* m-header-part-of-lookbook-starting */
+
+.main-icon {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+.meta-card-1 {
+    width: 24%;
+    margin: 34px 44px;
+    height: 100%;
+
+}
+
+
+.meta-card-1>div {
+    height: 100%;
+}
+
+.main-icon-1 {
+
+    width: 3rem;
+    right: 30px;
+}
+
+
+.m-hover-text-1 {
+    visibility: hidden;
+    width: 55px;
+    background-color: black;
+    color: white;
+    text-align: center;
+    border-radius: 2px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+
+
+}
+
+.main-icon-1:hover {
+    cursor: pointer;
+    color: rgb(80, 179, 255);
+}
+
+.main-icon-1:hover .m-hover-text-1 {
+    visibility: visible;
+}
+
+
+.main-icon-2 {
+
+    width: 3rem;
+    right: 30px;
+}
+
+.m-hover-text-2 {
+    visibility: hidden;
+    width: 75px;
+    background-color: black;
+    color: white;
+
+    text-align: center;
+    border-radius: 2px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+
+
+}
+
+.main-icon-2:hover {
+    cursor: pointer;
+    color: rgb(80, 179, 255);
+}
+
+.main-icon-2:hover .m-hover-text-2 {
+    visibility: visible;
+}
+
+.main-icon-3 {
+
+    width: 3rem;
+    right: 30px;
+}
+
+.m-hover-text-3 {
+    visibility: hidden;
+    width: 65px;
+    background-color: black;
+    color: white;
+    text-align: center;
+    border-radius: 2px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+
+
+}
+
+.main-icon-3:hover {
+    cursor: pointer;
+    color: rgb(80, 179, 255);
+}
+
+.main-icon-3:hover .m-hover-text-3 {
+    visibility: visible;
+}
+
+.main-icon-4 {
+
+    width: 3rem;
+    right: 30px;
+}
+
+.m-hover-text-4 {
+    visibility: hidden;
+    width: 65px;
+    background-color: black;
+    color: white;
+    text-align: center;
+    border-radius: 2px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+
+
+}
+
+.main-icon-4:hover {
+    cursor: pointer;
+    color: rgb(80, 179, 255);
+}
+
+.main-icon-4:hover .m-hover-text-4 {
+    visibility: visible;
+}
+
+
+
+/* Alumni-card */
+
+.card-container {
+    margin-top: 30px;
+}
+
+
+.Alumni-card {
+    display: flex;
+    flex-direction: row;
+}
+
+.Alumni-card-1 {
+    margin-right: 12px;
+}
+
+.Alumni-card-2 {
+    margin-right: 12px;
+}
+
+
+.Placeholder-Image {
+    position: relative;
+    left: 50px
+}
+
+
+
+/* Review-part */
+
+.container {
+    margin-top: -15px;
+}
+
+.container .Polaris-CalloutCard__Image {
+
+    width: 25%;
+}
+
+.container .Polaris-Heading {
+    font-size: 30px;
+    margin-bottom: 12%;
+}
+
+.container .Polaris-TextContainer {
+    font-size: 18px;
+}
+
+.paragraph {
+    position: relative;
+    bottom: 30px;
+    line-height: 26px;
+}
+
+/*m-mediacard-container */
+
+.m-mediacard-container {
+    margin-top: 30px;
+    display: flex;
+    gap: 2em;
+    margin-bottom: 3em;
+}
+
+
+.m-mediacard-container > div {
+    max-width: 300px;
+    width: 100%;
+}
+
+.m-mediacard-container .Polaris-MediaCard__MediaContainer {
+    object-fit: fill;
+    object-position: center center;
+
+}
+
+.m-mediacard-container .Polaris-Heading {
+    font-size: 22px;
+}
+
+.container.merox-reviews-part h2 {
+    display: inline-block;
+    margin-bottom: 1rem;
+    font-size: 22px;
+}
+/* media Quary */
+@media(max-width: 600px) {
+    .meta-card-1 {
+        width: 45%;
+        padding: 10px;
+        margin: 0;
+    }
+
+    .meta-image-1 {
+        position: relative;
+        left: -23px;
+    }
+
+    .meta-product-1 h1 {
+        font-size: 15px;
+    }
+
+    .container .Polaris-Heading {
+        line-height: 35px;
+    }
+
+    .paragraph {
+        line-height: 28px;
+    }
+
+
+}
+
+
+
+
+/* m-image-slider */
+
+.m-image-slider {
+    position: relative;
+    left: -10px;
+}
+
+.m-carousel-container {
+    position: relative;
+    left: 9.5px;
+}
+
+.m-appblock {
+
+    font-size: var(--p-font-size-12);
+    margin-top: 18px;
+    position: relative;
+    /* right: 32px; */
+    line-height: var(--p-line-height-5);
+}
+
+.m-image-slider .carousel .carousel-status {
+    position: absolute;
+    top: 25px;
+    right: 23px;
+    font-size: 21px;
+    color: #111010;
+}

@@ -1,0 +1,33 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "753e1004b9f1e261b63f2d6636dac445"
+application_url = "https://retrieved-epa-dump-ko.trycloudflare.com"
+embedded = true
+name = "ankit-app-dev"
+handle = "ankit-app-dev"
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "meroxiodev2.myshopify.com"
+
+[webhooks]
+api_version = "2024-04"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = ""
+
+[auth]
+redirect_urls = [
+  "https://retrieved-epa-dump-ko.trycloudflare.com/auth/callback",
+  "https://retrieved-epa-dump-ko.trycloudflare.com/auth/shopify/callback",
+  "https://retrieved-epa-dump-ko.trycloudflare.com/api/auth/callback"
+]
+
+[app_proxy]
+url = "https://retrieved-epa-dump-ko.trycloudflare.com/api/anchor-cart"
+subpath = "anchor-cart"
+prefix = "apps"
+
+[pos]
+embedded = false

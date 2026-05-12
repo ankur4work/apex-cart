@@ -1,0 +1,43 @@
+.navbar {
+    background: linear-gradient(135deg, #0f62fe 0%, #0043ce 100%);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 8px 16px rgba(15, 98, 254, 0.15);
+    margin-top: 60px;
+  }
+  
+  .tab-bar {
+    list-style: none;
+    display: flex;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .tab-bar li {
+    display: inline;
+  }
+  
+  .tab-bar a {
+    text-decoration: none;
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+  
+  .tab-bar a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+  }
+  
+  .tab-bar a:active {
+    background-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(0);
+  }
+  
+  
